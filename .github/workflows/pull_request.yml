@@ -1,0 +1,29 @@
+name: PR Build
+
+on:
+  pull_request:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        test-type: [ unit-tests, integration-tests ]
+      
+    steps:
+    - uses: actions/checkout@v2
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: |
+          3.1.x
+          6.0.x
+    - name: Restore dependencies
+      run: dotnet restore
+      working-directory: ./
+    - name: Build
+      run: dotnet build --no-restore
+      working-directory: ./
+    - name: Run tests
+      run: dotnet test --verbosity normal
+      working-directory: ./
