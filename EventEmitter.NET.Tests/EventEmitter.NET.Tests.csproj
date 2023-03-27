@@ -20,7 +20,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\EventEmitter.NET.csproj" />
+      <ProjectReference Include="..\EventEmitter.NET\EventEmitter.NET.csproj" />
     </ItemGroup>
 
 </Project>

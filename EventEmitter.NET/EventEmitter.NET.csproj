@@ -1,0 +1,32 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFrameworks>net7.0;netcoreapp3.1;netstandard2.1</TargetFrameworks>
+        <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+        <Title>EventEmitter.NET</Title>
+        <Authors>ecp4224</Authors>
+        <Description>A type-safe generic EventEmitter inspired by NodeJS's EventEmitter pattern</Description>
+        <PackageProjectUrl>https://github.com/ecp4224/EventEmitter.NET</PackageProjectUrl>
+        <PackageLicenseUrl>https://github.com/ecp4224/EventEmitter.NET/blob/main/LICENSE</PackageLicenseUrl>
+        <RepositoryUrl>https://github.com/ecp4224/EventEmitter.NET</RepositoryUrl>
+        <RepositoryType>git</RepositoryType>
+        <PackageTags>events event eventemitter node nodejs typed typeevent typedeventemitter eventhandler net</PackageTags>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Compile Remove="EventEmitter.NET.Tests\**" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <EmbeddedResource Remove="EventEmitter.NET.Tests\**" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <None Remove="EventEmitter.NET.Tests\**" />
+    </ItemGroup>
+
+</Project>

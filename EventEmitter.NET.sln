@@ -1,6 +1,6 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EventEmitter.NET1", "EventEmitter.NET.csproj", "{F69038EF-800D-47B1-A722-6C09FFE137F3}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EventEmitter.NET", "EventEmitter.NET\EventEmitter.NET.csproj", "{F69038EF-800D-47B1-A722-6C09FFE137F3}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EventEmitter.NET.Tests", "EventEmitter.NET.Tests\EventEmitter.NET.Tests.csproj", "{9DFCF3E0-F76B-4EB0-9BC3-37AAECAD8395}"
 EndProject
