@@ -3,7 +3,11 @@ A type-safe generic EventEmitter inspired by NodeJS's event emitter.
 
 ## Install
 
-TODO
+Install via NuGet
+
+```shell
+dotnet add package EventEmitter.NET
+```
 
 ## Usage
 
