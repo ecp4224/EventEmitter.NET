@@ -1,5 +1,6 @@
+using System;
 using System.Collections.Generic;
-using EventEmitter.NET.Interfaces;
+using Newtonsoft.Json;
 
 namespace EventEmitter.NET
 {
@@ -82,6 +83,16 @@ namespace EventEmitter.NET
                     eventArgs.SetData(eventData);
                     eventTrigger(this, eventArgs);
                 }
+            }
+        }
+
+        public void Dispose()
+        {
+            EventTriggers.Dispose();
+            lock (_managerLock)
+            {
+                if (_instances.ContainsKey(Context))
+                    _instances.Remove(Context);
             }
         }
     }

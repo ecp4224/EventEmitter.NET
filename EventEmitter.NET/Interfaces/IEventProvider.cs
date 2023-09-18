@@ -1,11 +1,13 @@
-namespace EventEmitter.NET.Interfaces
+using System;
+
+namespace EventEmitter.NET
 {
     /// <summary>
     /// An interface that represents a class that can trigger event listeners for a given data type. This
     /// provider can trigger any event for a given event data type.
     /// </summary>
     /// <typeparam name="T">The event data type this class triggers events with</typeparam>
-    public interface IEventProvider<in T>
+    public interface IEventProvider<in T> : IDisposable
     {
         /// <summary>
         /// Trigger the given event (using the event id) with the given event data.

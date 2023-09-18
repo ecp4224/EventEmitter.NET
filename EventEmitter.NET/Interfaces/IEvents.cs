@@ -1,4 +1,4 @@
-namespace EventEmitter.NET.Interfaces
+namespace EventEmitter.NET
 {
     /// <summary>
     /// An interface that represents a class that triggers events that can be listened to.

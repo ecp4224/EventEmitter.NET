@@ -15,8 +15,9 @@ namespace EventEmitter.NET
     /// event listeners are statically typed and will never receive an event that its callback cannot cast safely
     /// (this includes subclasses, interfaces and object).
     /// </summary>
-    public class EventDelegator
+    public class EventDelegator : IDisposable
     {
+        private static readonly object _contextLock = new object();
         private static HashSet<string> contextInstances = new HashSet<string>();
 
         private readonly object _cacheLock = new object();
@@ -39,16 +40,19 @@ namespace EventEmitter.NET
         /// </summary>
         /// <param name="parent">The module to grab context from</param>
         /// <exception cref="ArgumentException">If this module's context is already being used by EventDelegator</exception>
-        public EventDelegator(string contextString)
+        public EventDelegator(string context)
         {
-            this.Name = contextString + ":event-delegator";
-            this.Context = contextString;
+            this.Name = context + ":event-delegator";
+            this.Context = context;
 
-            if (contextInstances.Contains(Context))
-                throw new ArgumentException(
-                    $"The context string {Context} is attempting to create a new EventDelegator that overlaps with an existing EventDelegator");
-            
-            contextInstances.Add(Context);
+            lock (_contextLock)
+            {
+                if (contextInstances.Contains(Context))
+                    throw new ArgumentException(
+                        $"The context {Context} is attempting to create a new EventDelegator that overlaps with an existing EventDelegator");
+
+                contextInstances.Add(Context);
+            }
         }
 
         /// <summary>
@@ -72,7 +76,7 @@ namespace EventEmitter.NET
         /// <param name="callback">The callback to invoke when the event is triggered</param>
         /// <typeparam name="T">The type of event data the callback MUST be given</typeparam>
         public void ListenFor<T>(string eventId, EventHandler<GenericEvent<T>> callback)
-        {  
+        {
             EventManager<T, GenericEvent<T>>.InstanceOf(Context).EventTriggers[eventId] += callback;
         }
 
@@ -229,7 +233,7 @@ namespace EventEmitter.NET
                     propagateEventMethod.Invoke(genericProvider, new object[] { eventId, eventData });
                     wasTriggered = true;
                 }
-                catch (Exception)
+                catch (Exception e)
                 {
                     if (raiseOnException)
                         throw;
@@ -237,6 +241,48 @@ namespace EventEmitter.NET
             }
 
             return wasTriggered;
+        }
+
+        public void Dispose()
+        {
+            lock (_cacheLock)
+            {
+                // loop through all cached types and remove all listeners
+                foreach (var eventType in _typeToTriggerTypes.Keys)
+                {
+                    var allPossibleTypes = _typeToTriggerTypes[eventType];
+
+                    // loop through all possible types of an event type, since
+                    // event listeners can be anywhere
+                    foreach (var type in allPossibleTypes)
+                    {
+                        var genericFactoryType = typeof(EventFactory<>).MakeGenericType(type);
+
+                        var instanceProperty = genericFactoryType.GetMethod("InstanceOf");
+                        if (instanceProperty == null) continue;
+
+                        var genericFactory = instanceProperty.Invoke(null, new object[] { Context });
+
+                        var genericProviderProperty = genericFactoryType.GetProperty("Provider");
+                        if (genericProviderProperty == null) continue;
+
+                        var genericProvider = genericProviderProperty.GetValue(genericFactory);
+                        if (genericProvider == null) continue;
+
+                        // type of IEventProvider is IDisposable
+                        IDisposable disposable = (IDisposable)genericProvider;
+
+                        // dispose of this provider
+                        disposable.Dispose();
+                    }
+                }
+            }
+
+            lock (_contextLock)
+            {
+                if (contextInstances.Contains(Context))
+                    contextInstances.Remove(Context);
+            }
         }
     }
 }

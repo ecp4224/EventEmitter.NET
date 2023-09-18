@@ -172,5 +172,65 @@ namespace EventEmitter.NET.Tests
             Assert.Equal(result1.test1, testData1.test1);
             Assert.Equal(result1.test2, testData1.test2);
         }
+        
+        [Fact, Trait("Category", "unit")]
+        public void TestContextSharingWithoutDisposingFails()
+        {
+            var context = "example-context";
+            var events = new EventDelegator(context);
+
+            Assert.Equal(context, events.Context);
+            
+            Assert.Throws<ArgumentException>(() => new EventDelegator(context));
+            
+            events.Dispose();
+
+            events = new EventDelegator(context);
+            
+            Assert.Equal(context, events.Context);
+            
+            events.Dispose();
+        }
+
+        [Fact, Trait("Category", "unit")]
+        public void TestEventsDontLeakWhenDisposed()
+        {
+            var context = "example-context";
+            var events = new EventDelegator(context);
+
+            Assert.Equal(context, events.Context);
+            
+            Assert.Throws<ArgumentException>(() => new EventDelegator(context));
+            
+            TestEventData result1 = null;
+            
+            events.ListenForAndDeserialize<TestEventData>("abc", delegate(object sender, GenericEvent<TestEventData> @event)
+            {
+                result1 = @event.EventData;
+            });
+            
+            var testData1 = new TestEventData()
+            {
+                test1 = 11,
+                test2 = "abccc"
+            };
+
+            var json = JsonConvert.SerializeObject(testData1);
+
+            events.Trigger("abc", json);
+            
+            Assert.Equal(result1.test1, testData1.test1);
+            Assert.Equal(result1.test2, testData1.test2);
+            
+            events.Dispose();
+            result1 = null;
+
+            events = new EventDelegator(context);
+            events.Trigger("abc", json);
+            
+            Assert.Null(result1);
+            
+            events.Dispose();
+        }
     }
 }

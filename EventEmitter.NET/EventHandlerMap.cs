@@ -7,7 +7,7 @@ namespace EventEmitter.NET
     /// A mapping of eventIds to EventHandler objects. This using a Dictionary as the backing datastore
     /// </summary>
     /// <typeparam name="TEventArgs">The type of EventHandler's argument to store</typeparam>
-    public class EventHandlerMap<TEventArgs>
+    public class EventHandlerMap<TEventArgs> : IDisposable
     {
         private Dictionary<string, EventHandler<TEventArgs>> mapping =
             new Dictionary<string, EventHandler<TEventArgs>>();
@@ -92,6 +92,14 @@ namespace EventEmitter.NET
                 {
                     mapping.Remove(eventId);
                 }
+            }
+        }
+
+        public void Dispose()
+        {
+            lock (_mappingLock)
+            {
+                mapping.Clear();
             }
         }
     }

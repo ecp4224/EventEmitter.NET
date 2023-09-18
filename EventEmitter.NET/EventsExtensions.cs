@@ -1,5 +1,4 @@
 ﻿using System;
-using EventEmitter.NET.Interfaces;
 using EventEmitter.NET.Model;
 
 namespace EventEmitter.NET

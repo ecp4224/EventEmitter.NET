@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using EventEmitter.NET.Interfaces;
 
 namespace EventEmitter.NET
 {

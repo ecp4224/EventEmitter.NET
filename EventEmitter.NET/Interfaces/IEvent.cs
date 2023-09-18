@@ -1,4 +1,4 @@
-namespace EventEmitter.NET.Interfaces
+namespace EventEmitter.NET
 {
     /// <summary>
     /// An interface that represents a class that can take in an event's data and store it. The event data
